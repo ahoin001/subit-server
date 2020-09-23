@@ -1,26 +1,42 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Tasks', {
+    await queryInterface.createTable('Projects', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
-        type: Sequelize.STRING
-      },
       userId: {
         type: Sequelize.INTEGER,
         onDelete: 'CASCADE',
-
-        // ? This is where the association on model will connect foreign key in task to userId in Users
         references: {
           model: 'Users',
           key: 'id',
           as: 'userId',
         }
+      },
+      subtitleArray: {
+        type: Sequelize.ARRAY(Sequelize.JSON)
+      },
+      videoURL: {
+        type: Sequelize.STRING
+      },
+      title: {
+        type: Sequelize.STRING
+      },
+      genre: {
+        type: Sequelize.STRING
+      },
+      description: {
+        type: Sequelize.STRING
+      },
+      videoURL: {
+        type: Sequelize.STRING
+      },
+      language: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -33,6 +49,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Tasks');
+    await queryInterface.dropTable('Projects');
   }
 };

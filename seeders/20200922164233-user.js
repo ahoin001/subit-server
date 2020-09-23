@@ -25,14 +25,17 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Tasks', [{
-      title: 'Build an app',
-      userId: 1, // First seeeded user has userId 1 so this will connect them
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }], {});
+    return queryInterface.bulkInsert('Users', [{
+        userName: 'JohnTron',
+        email: 'demo@demo.com',
+        password: '$321!pass!123$',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }], {});
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('Tasks', null, {});
+down: (queryInterface, Sequelize) => {
+    return queryInterface.bulkDelete('Users', null, {});
   }
 };
+
+

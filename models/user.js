@@ -1,6 +1,5 @@
 'use strict';
 
-
 // const {
 //   Model
 // } = require('sequelize');
@@ -16,8 +15,7 @@
 //     }
 //   };
 //   User.init({
-//     firstName: DataTypes.STRING,
-//     lastName: DataTypes.STRING,
+//     userName: DataTypes.STRING,
 //     email: DataTypes.STRING,
 //     password: DataTypes.STRING
 //   }, {
@@ -27,12 +25,12 @@
 //   return User;
 // };
 
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    password: DataTypes.STRING,
-    email: DataTypes.STRING
+    userName: DataTypes.STRING,
+    email: DataTypes.STRING,
+    password: DataTypes.STRING
   }, {});
   User.associate = function (models) {
     // associations can be defined here
@@ -41,9 +39,9 @@ module.exports = (sequelize, DataTypes) => {
     // the foreignKey option is set to the name of the key on the other table.In other words, when theuserId on a task is the same 
     // as the id of a user, we have a match.
 
-      User.hasMany(models.Task, {
-        foreignKey: 'userId',
-      })
+    User.hasMany(models.Project, {
+      foreignKey: 'userId',
+    })
   };
   return User;
 };
