@@ -1,10 +1,12 @@
 var createError = require('http-errors');
 var express = require('express');
+
 // var debug = require('debug')('app4')
 let cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const session = require("express-session");
 
 var indexRouter = require('./src/routes/index');
 var usersRouter = require('./src/routes/user.routes');
@@ -17,6 +19,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 
+// SESSION:
+app.use(session({
+  secret: "my-amazing-secret-blah",
+  resave: true,
+  saveUninitialized: true // don't save any sessions that doesn't have any data in them
+}));
+
+// 🚨🚨🚨 must come after the sessions 🚨🚨🚨
+require('./configs/passport/passport.setup')(app);
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
