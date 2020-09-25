@@ -1,12 +1,15 @@
 const express = require('express');
 const projectRouter = express.Router();
-const Project = require("../models/Project");
 
-// // This package allows access to uploaded files from req.files
-// const fileUpload = require('express-fileupload');
+// for multipart/formdata
+var multer = require('multer')
+var upload = multer({ dest: 'uploads/' })
 
 // Import CLoudinary from config files where we set access keys
-const cloudinary = require('../configs/cloudinaryconfig');
+const cloudinary = require('../../configs/cloudinary-config')
+
+const db = require('../../models/index');
+const Project = db.Project
 
 /*******************************************************
  * 
@@ -36,7 +39,7 @@ projectRouter.get('/api/project-info/:projectId', (req, res, nex) => {
   let projectId = req.params.projectId;
   Project
     .findById(projectId)
-    .then( project => {
+    .then(project => {
       res.status(200).json(project);
     })
     .catch(err => next(err));
@@ -65,81 +68,43 @@ projectRouter.get('/api/subtitles/:projectId', (req, res, next) => {
  *                   CREATE ROUTE
  * 
  * *****************************************************/
-projectRouter.post('/api/create-project/:userId', (req, res, next) => {
-  console.log('userId: ', req.params.userId); 
+projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), async (req, res, next) => {
+
+  console.log('*************************************************** userId: ', req.params.userId);
+  console.log('*************************************************** reqbody: ', req.body)
+  console.log('*************************************************** reqfile: ', req.file)
+
+
+  // console.log('*************************************************** reqbody: ',req)
+
+  try {
+    const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'subit',
+      resource_type: "video"
+    })
+
+    console.log('++++++++++++++++++++++++++++++++++++++++++++', uploadResponse)
+    res.json({ message: 'YAYAYAYYAYYAYA' })
+  } catch (error) {
+    console.log('FAILIURE')
+    console.log(error)
+  }
+
   // the fields have the same names as the ones in the model so we can simply pass
   // req.body to the .create() method
-  const { userId = req.params.userId, videoURL, title, genre, description, language } = req.body;
+  // const { userId = req.params.userId, videoURL, title, genre, description, language } = req.body;
+
   // { userId, videoURL, title, genre, description, createdBy, language }
   //  const { userId = req.user._id}
-Project.create({ userId, videoURL, title, genre, description, language }) //creates new project document in DB with this info
-  // Project.create(req.body)
-  .then( aNewProject => {
-      // console.log('Created new thing: ', aNewThing);
-      res.status(200).json(aNewProject);
-  })
-  .catch( err => next(err) )
+  // Project.create({ userId, videoURL, title, genre, description, language }) //creates new project document in DB with this info
+  //   // Project.create(req.body)
+  //   .then(aNewProject => {
+  //     // console.log('Created new thing: ', aNewThing);
+  //     res.status(200).json(aNewProject);
+  //   })
+  //   .catch(err => next(err))
+
 })
-
-// TODO Where is this on my local? This is probably okay for demo but not scalable I think
-// Use temp files instead of memory for managing the upload process.
-// projectRouter.use(fileUpload({
-//   useTempFiles: true,
-//   tempFileDir: '/tmp/'
-// }));
-
-
-// projectRouter.post('/dashboard/create-project/:userId', (req, res, next) => {
-
-//   console.log(req.user);
-
-//   if (!this.props.theUser) {
-//     this.props.history.push('/login')
-//   }
-
-//   // TODO Where is this on my local? This is probably okay for demo but not scalable I think
-//   // Use temp files instead of memory for managing the upload process.
-//   projectRouter.use(fileUpload({
-//     useTempFiles: true,
-//     tempFileDir: '/tmp/'
-//   }));
-
-//   // In Postman, fileName is the key used to get the value ( of file) that was uploaded
-//   const theFile = req.files.fileName;
-
-//   // To hold value of url cloudinary gives us
-//   let videoURL = '';
-
-//   console.log(" REQUEST DATA REQUESTREQUESTREQUESTREQUESTREQUESTREQUESTREQUESTREQUESTREQUESTREQUEST ",
-//     req.body, theFile);
-
-//   console.log(" Entering cloudinary method EnteringEnteringEnteringEnteringEnteringEnteringEnteringEntering ");
-
-//   cloudinary.uploader.upload(theFile.tempFilePath, {
-//     resource_type: "video"
-//   },
-//     function (error, result) {
-
-//       console.log('error', error);
-//       console.log('result', result);
-
-//       const { userId = req.user._id, videoURL = result.url, title, genre, description, createdBy = req.user.fullName, language } = req.body;
-
-//       Project
-//         .create({ userId, videoURL, title, genre, description, createdBy, language }) //creates new project document in DB with this info
-//         .then(projectDocument => {
-
-//           res.status(401).json({ message: "CREATE WAS SUCCESSFUL!" });
-//           // 
-//           console.log('Successfully saved video url!');
-//           console.log(`projectDocument is ======================================================= ${projectDocument}`);
-
-//         }).catch(err => next(err))
-//         .catch(err => next(err));
-
-//     });
-
-// });
 
 /********************************************************** 
   

@@ -2,16 +2,22 @@ const cloudinary = require('cloudinary');
 const cloudinaryStorage = require('multer-storage-cloudinary');
 const multer = require('multer');
 
+// cloudinary.config({
+//   cloud_name: process.env.cloudName,
+//   api_key: process.env.cloudKey,
+//   api_secret: process.env.cloudSecret
+// });
+
 cloudinary.config({
-  cloud_name: process.env.cloudName,
-  api_key: process.env.cloudKey,
-  api_secret: process.env.cloudSecret
+  cloud_name: "damclaohv",
+  api_key: "357812489313368",
+  api_secret: "BN_PH_5aGxM9bI-eMB9HXHIxR10"
 });
 
 var storage = cloudinaryStorage({
   cloudinary,
   params : {resource_type: 'video'},
-  allowedFormats: ['mp4'],
+  allowedFormats: ['mp4','m4a'],
   filename: function (req, res, cb) {
     cb(null, res.originalname); // The file on cloudinary would have the same name as the original file name
   }
