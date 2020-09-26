@@ -78,13 +78,38 @@ projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), as
   // console.log('*************************************************** reqbody: ',req)
 
   try {
-    const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+
+    // * Upload Video file to cloudinary and save Url to database
+
+    const uploadResponseFromCloudinary = await cloudinary.uploader.upload(req.file.path, {
       upload_preset: 'subit',
       resource_type: "video"
     })
 
-    console.log('++++++++++++++++++++++++++++++++++++++++++++', uploadResponse)
-    res.json({ message: 'YAYAYAYYAYYAYA' })
+    console.log('++++++++++++++++++++++++++++++++++++++++++++ UPLOAD RESPONSE FROM CLOUDINARY', uploadResponseFromCloudinary)
+
+    // * Videoes would be too large, so I saved the vidoe to cloudinary, and url to video in DB 
+
+    const videoURL = uploadResponseFromCloudinary.url;
+    console.log('++++++++++++++++++++++++++++++++++++++++++++ CLOUDINARYURL', uploadResponseFromCloudinary.url)
+
+    const userId = req.params.userId;
+
+    const { title, genre, description, language } = req.body;
+
+    const responseFromCreatingProject = await Project.create({
+      userId,
+      videoURL,
+      title,
+      genre,
+      description,
+      language,
+    });
+
+    console.log('!!!!!!!!!!!!!!!!!! RESPONSE FROM PROJECT CREATE: ', responseFromCreatingProject)
+
+    res.status(200).json(responseFromCreatingProject);
+
   } catch (error) {
     console.log('FAILIURE')
     console.log(error)
