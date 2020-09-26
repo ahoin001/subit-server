@@ -1,6 +1,10 @@
 const express = require('express');
 const projectRouter = express.Router();
 
+// Sequelize Model (Must be Imported this way)
+const db = require('../../models/index');
+const Project = db.Project
+
 // for multipart/formdata
 var multer = require('multer')
 var upload = multer({ dest: 'uploads/' })
@@ -8,8 +12,56 @@ var upload = multer({ dest: 'uploads/' })
 // Import CLoudinary from config files where we set access keys
 const cloudinary = require('../../configs/cloudinary-config')
 
-const db = require('../../models/index');
-const Project = db.Project
+
+
+/*******************************************************
+ * 
+ *                   CREATE ROUTE
+ * 
+ * *****************************************************/
+
+projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), async (req, res, next) => {
+
+  // console.log('*************************************************** userId: ', req.params.userId);
+  console.log('*************************************************** reqbody: ', req.body)
+  console.log('*************************************************** reqfile: ', req.file)
+
+  try {
+
+    // * Upload Video file to cloudinary and save Url to database
+
+    const uploadResponseFromCloudinary = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'subit',
+      resource_type: "video/mp4"
+    })
+
+    // * Videoes would be too large, so I saved the vidoe to cloudinary, and then video url to video in DB 
+
+    const videoURL = uploadResponseFromCloudinary.url;
+
+    const userId = req.params.userId;
+
+    const { title, genre, description, language } = req.body;
+
+    const responseFromCreatingProject = await Project.create({
+      userId,
+      videoURL,
+      title,
+      genre,
+      description,
+      language,
+    });
+
+    console.log('!!!!!!!!!!!!!!!!!! RESPONSE FROM PROJECT CREATE: ', responseFromCreatingProject)
+
+    res.status(200).json(responseFromCreatingProject);
+
+  } catch (error) {
+    console.log('FAILIURE')
+    console.log(error)
+  }
+
+})
 
 /*******************************************************
  * 
@@ -19,12 +71,17 @@ const Project = db.Project
 
 projectRouter.get('/api/dashboard/:userId', (req, res, next) => {
 
-  // Finding all  projects with the userId matching the current session _id
+  // Finding all  projects with the userId matching the current user _id
   Project
 
-    // Return all documents with the provided userID
-    .find({ userId: req.params.userId })
+    // Return all documents with the current userID
+    .findAll({
+      where: {
+        userId: req.params.userId
+      }
+    })
     .then((projects) => {
+
       // Make sure we have projects
       console.log("this is working !!!!!!!!!!! ", projects)
 
@@ -63,73 +120,7 @@ projectRouter.get('/api/subtitles/:projectId', (req, res, next) => {
     .catch(err => next(err));
 });
 
-/*******************************************************
- * 
- *                   CREATE ROUTE
- * 
- * *****************************************************/
-projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), async (req, res, next) => {
 
-  console.log('*************************************************** userId: ', req.params.userId);
-  console.log('*************************************************** reqbody: ', req.body)
-  console.log('*************************************************** reqfile: ', req.file)
-
-
-  // console.log('*************************************************** reqbody: ',req)
-
-  try {
-
-    // * Upload Video file to cloudinary and save Url to database
-
-    const uploadResponseFromCloudinary = await cloudinary.uploader.upload(req.file.path, {
-      upload_preset: 'subit',
-      resource_type: "video"
-    })
-
-    console.log('++++++++++++++++++++++++++++++++++++++++++++ UPLOAD RESPONSE FROM CLOUDINARY', uploadResponseFromCloudinary)
-
-    // * Videoes would be too large, so I saved the vidoe to cloudinary, and url to video in DB 
-
-    const videoURL = uploadResponseFromCloudinary.url;
-    console.log('++++++++++++++++++++++++++++++++++++++++++++ CLOUDINARYURL', uploadResponseFromCloudinary.url)
-
-    const userId = req.params.userId;
-
-    const { title, genre, description, language } = req.body;
-
-    const responseFromCreatingProject = await Project.create({
-      userId,
-      videoURL,
-      title,
-      genre,
-      description,
-      language,
-    });
-
-    console.log('!!!!!!!!!!!!!!!!!! RESPONSE FROM PROJECT CREATE: ', responseFromCreatingProject)
-
-    res.status(200).json(responseFromCreatingProject);
-
-  } catch (error) {
-    console.log('FAILIURE')
-    console.log(error)
-  }
-
-  // the fields have the same names as the ones in the model so we can simply pass
-  // req.body to the .create() method
-  // const { userId = req.params.userId, videoURL, title, genre, description, language } = req.body;
-
-  // { userId, videoURL, title, genre, description, createdBy, language }
-  //  const { userId = req.user._id}
-  // Project.create({ userId, videoURL, title, genre, description, language }) //creates new project document in DB with this info
-  //   // Project.create(req.body)
-  //   .then(aNewProject => {
-  //     // console.log('Created new thing: ', aNewThing);
-  //     res.status(200).json(aNewProject);
-  //   })
-  //   .catch(err => next(err))
-
-})
 
 /********************************************************** 
   
