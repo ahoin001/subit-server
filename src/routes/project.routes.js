@@ -12,8 +12,6 @@ var upload = multer({ dest: 'uploads/' })
 // Import CLoudinary from config files where we set access keys
 const cloudinary = require('../../configs/cloudinary-config')
 
-
-
 /*******************************************************
  * 
  *                   CREATE ROUTE
@@ -32,7 +30,7 @@ projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), as
 
     const uploadResponseFromCloudinary = await cloudinary.uploader.upload(req.file.path, {
       upload_preset: 'subit',
-      resource_type: "video/mp4"
+      resource_type: "video"
     })
 
     // * Videoes would be too large, so I saved the vidoe to cloudinary, and then video url to video in DB 
@@ -92,40 +90,74 @@ projectRouter.get('/api/dashboard/:userId', (req, res, next) => {
 
 });
 
-projectRouter.get('/api/project-info/:projectId', (req, res, nex) => {
+projectRouter.get('/api/subtitles/:projectId', async (req, res, next) => {
+
+  console.log("YOU MADE IT!!!!!!!!! Project Id", req.params.projectId);
+
+  try {
+
+    const [results, metadata] = await db.sequelize.query(
+      `SELECT * FROM "Projects" JOIN "Subtitles" ON "Subtitles"."projectId" = "Projects".id;`);
+    console.log('!!!!!!!!!!!!!!!!!!!!: ,', results);
+
+    results.map((eachSub) => {
+      console.log(eachSub.inTimeVTT);
+      console.log(eachSub.outTimeVTT);
+      console.log(eachSub.text)
+    });
+
+    res.status(200).json({ results });
+
+  } catch (error) {
+    console.log(error)
+  }
+
+
+
+
+
+  // Project
+  //   .findById(req.params.projectId)
+  //   .populate('subtitleArray')
+  //   .then(project => {
+  //     let subArray = project.subtitleArray;
+  //     subArray.map((eachSub) => {
+  //       console.log(eachSub.inTimeVTT);
+  //       console.log(eachSub.outTimeVTT);
+  //       console.log(eachSub.text)
+  //     });
+
+  //     res.status(200).json({ subArray });
+  //   })
+  //   .catch(err => next(err));
+
+});
+
+projectRouter.get('/api/project-info/:projectId', async (req, res, nex) => {
+
   let projectId = req.params.projectId;
-  Project
-    .findById(projectId)
-    .then(project => {
-      res.status(200).json(project);
-    })
-    .catch(err => next(err));
+
+  try {
+
+    const foundProjec = await Project.findOne({
+      where: {
+        email: email
+      }
+    });
+
+    res.status(200).json(foundProjec);
+
+  } catch (error) {
+    console.log('FAILED FINDING SPECIFIC PROJECT');
+    console.log(error)
+  }
+
 });
-
-
-projectRouter.get('/api/subtitles/:projectId', (req, res, next) => {
-  Project
-    .findById(req.params.projectId)
-    .populate('subtitleArray')
-    .then(project => {
-      let subArray = project.subtitleArray;
-      subArray.map((eachSub) => {
-        console.log(eachSub.inTimeVTT);
-        console.log(eachSub.outTimeVTT);
-        console.log(eachSub.text)
-      });
-
-      res.status(200).json({ subArray });
-    })
-    .catch(err => next(err));
-});
-
-
 
 /********************************************************** 
   
  * UPDATE AND DELETE
- * req.params is whatever the value in the url in place of our parameter is
+ 
 ***********************************************************/
 
 // UPDATE ROUTE

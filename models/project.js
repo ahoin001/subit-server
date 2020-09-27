@@ -1,34 +1,5 @@
 'use strict';
 
-// const {
-//   Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//   class Project extends Model {
-//     /**
-//      * Helper method for defining associations.
-//      * This method is not a part of Sequelize lifecycle.
-//      * The `models/index` file will call this method automatically.
-//      */
-//     static associate(models) {
-//       // define association here
-//     }
-//   };
-//   Project.init({
-    // subtitleArray: DataTypes.ARRAY,
-    // videoURL: DataTypes.STRING,
-    // title: DataTypes.STRING,
-    // genre: DataTypes.STRING,
-    // description: DataTypes.STRING,
-    // videoURL: DataTypes.STRING,
-    // language: DataTypes.STRING
-//   }, {
-//     sequelize,
-//     modelName: 'Project',
-//   });
-//   return Project;
-// };
-
 module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define('Project', {
     userId: DataTypes.INTEGER,

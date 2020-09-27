@@ -1,5 +1,5 @@
 var express = require('express');
-var router = express.Router();
+var userRouter = express.Router();
 
 const passport = require("passport");
 const bcrypt = require('bcrypt');
@@ -12,20 +12,16 @@ const userController = require('../controllers/index')
 
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
+userRouter.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
 
 
-router.delete('/:idOfUserToDelete', userController.deleteUserFromDB);
+userRouter.delete('/:idOfUserToDelete', userController.deleteUserFromDB);
 
+// userRouter.post('/signup', userController.addUserToDB);
 
-// ! READ ME WHEN YOU WORK AGAIAN
-// ? YOU NEED TO CHECK CONTROLLER AND FIGURE OUT HOW TO USE SEQUEIZE MODEL WITH PASSPORT
-
-// router.post('/signup', userController.addUserToDB);
-
-router.post("/signup", async (req, res, next) => {
+userRouter.post("/signup", async (req, res, next) => {
 
   console.log('************************ REQ: ', req.login)
 
@@ -96,7 +92,7 @@ router.post("/signup", async (req, res, next) => {
 
 });
 
-router.post('/login',
+userRouter.post('/login',
   passport.authenticate('local'),
   function (req, res) {
     // If this function gets called, authentication was successful.
@@ -115,7 +111,7 @@ router.post('/login',
 
   });
 
-// router.post("/login", (req, res, next) => {
+// userRouter.post("/login", (req, res, next) => {
 // 
 
 // ***************************************************************
@@ -167,4 +163,4 @@ router.post('/login',
 
 // )
 
-module.exports = router;
+module.exports = userRouter;
