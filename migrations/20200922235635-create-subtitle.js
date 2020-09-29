@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Subtitles', {
@@ -49,3 +50,33 @@ module.exports = {
     await queryInterface.dropTable('Subtitles');
   }
 };
+
+// module.exports = {
+//   up: (queryInterface, Sequelize) => {
+//     return Promise.all([
+//       queryInterface.changeColumn('Subtitles', 'inTime', {
+//         type: Sequelize.DECIMAL,
+//         // allowNull: false
+//       }),
+//     ]);
+//   },
+
+//   down: (queryInterface) => {
+//     return Promise.all([queryInterface.changeColumn('Subtitles', 'inTime')]);
+//   },
+// };
+
+// module.exports = {
+//   up: (queryInterface, Sequelize) => {
+//     return Promise.all([
+//       queryInterface.addColumn('Subtitles', 'june', {
+//         type: Sequelize.STRING,
+//         allowNull: true,
+//       }),
+//     ]);
+//   },
+
+//   down: (queryInterface) => {
+//     return Promise.all([queryInterface.removeColumn('Subtitles', 'june')]);
+//   },
+// };

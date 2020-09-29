@@ -93,11 +93,12 @@ projectRouter.get('/api/dashboard/:userId', (req, res, next) => {
 projectRouter.get('/api/subtitles/:projectId', async (req, res, next) => {
 
   console.log("YOU MADE IT!!!!!!!!! Project Id", req.params.projectId);
-
+  // `SELECT * FROM "Projects" JOIN "Subtitles" ON "Subtitles"."projectId" = "Projects".id;`);
   try {
 
     const [results, metadata] = await db.sequelize.query(
-      `SELECT * FROM "Projects" JOIN "Subtitles" ON "Subtitles"."projectId" = "Projects".id;`);
+      // `SELECT * FROM "Projects" JOIN "Subtitles" ON "Subtitles"."projectId" = ${req.params.projectId};`);
+      `SELECT * FROM "Subtitles" WHERE "Subtitles"."projectId" = ${req.params.projectId};`);
     console.log('!!!!!!!!!!!!!!!!!!!!: ,', results);
 
     results.map((eachSub) => {
@@ -111,9 +112,6 @@ projectRouter.get('/api/subtitles/:projectId', async (req, res, next) => {
   } catch (error) {
     console.log(error)
   }
-
-
-
 
 
   // Project
