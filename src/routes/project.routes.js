@@ -83,6 +83,8 @@ projectRouter.get('/api/dashboard/:userId', (req, res, next) => {
       // Make sure we have projects
       console.log("this is working !!!!!!!!!!! ", projects)
 
+      console.log("USER REQUESTING PROJECTS: ", req.user)
+
       // res.render('index');
       res.status(200).json(projects);
 
