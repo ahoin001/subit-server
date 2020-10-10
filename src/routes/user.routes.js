@@ -1,25 +1,15 @@
 var express = require('express');
 var userRouter = express.Router();
 
-const passport = require("passport");
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const passport = require("passport");
 
 const db = require('../../models/index');
 const User = db.User
 
 // ? Controller functions
-const userController = require('../controllers/index')
-
-
-/* GET users listing. */
-userRouter.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
-
-
-userRouter.delete('/:idOfUserToDelete', userController.deleteUserFromDB);
-
-// userRouter.post('/signup', userController.addUserToDB);
+const userController = require('../controllers/index');
 
 userRouter.post("/signup", async (req, res, next) => {
 
@@ -92,22 +82,34 @@ userRouter.post("/signup", async (req, res, next) => {
 
 });
 
+/* GET users listing. */
+userRouter.get('/', function (req, res, next) {
+  res.send('respond with a resource');
+});
+
+
+userRouter.delete('/:idOfUserToDelete', userController.deleteUserFromDB);
+
+// userRouter.post('/signup', userController.addUserToDB);
+
+
+
 userRouter.post('/login',
   passport.authenticate('local'),
   function (req, res) {
     // If this function gets called, authentication was successful.
     // If authentication succeeds, the next handler will be invoked 
     // and the req.user property will be set to the authenticated user.
-    
+
     console.log('PASSSPORT REQ AUTHETICATE: ', req.user)
 
     // console.log('&*&*&*&**&*&*&*&&8PASSSPORT RES AUTHETICATE: ', res)
 
     // set password to undefined so it doesn't get revealed in the client side (browser ==> react app)
     // userDoc.encryptedPassword = undefined;
-    
+
     // send json object with user information to the client
-    res.status(200).json({LoggedInUser: req.user });
+    res.status(200).json({ LoggedInUser: req.user });
 
   });
 
