@@ -35,7 +35,7 @@ module.exports = {
       videoURL: {
         type: Sequelize.STRING
       },
-      language: {
+      cloudId: {
         type: Sequelize.STRING
       },
       createdAt: {

@@ -35,13 +35,17 @@ projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), as
 
     console.log('RESPONSE FROM CLOUDINARY UPLOAD, NEED PUBLIC ID: ', uploadResponseFromCloudinary.public_id)
 
+    // * ID used to programatically delete project from cloudinary later
+    // const cloudId = uploadResponseFromCloudinary.public_id.split('/')[1]
+    const cloudId = uploadResponseFromCloudinary.public_id
+
     // * Videoes would be too large, so I saved the vidoe to cloudinary, and then video url to video in DB 
 
     const videoURL = uploadResponseFromCloudinary.url;
 
     const userId = req.params.userId;
 
-    const { title, genre, description, language } = req.body;
+    const { title, genre, description } = req.body;
 
     const responseFromCreatingProject = await Project.create({
       userId,
@@ -49,7 +53,7 @@ projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), as
       title,
       genre,
       description,
-      language,
+      cloudId,
     });
 
     console.log('!!!!!!!!!!!!!!!!!! RESPONSE FROM PROJECT CREATE: ', responseFromCreatingProject)
@@ -117,22 +121,6 @@ projectRouter.get('/api/subtitles/:projectId', async (req, res, next) => {
     console.log(error)
   }
 
-
-  // Project
-  //   .findById(req.params.projectId)
-  //   .populate('subtitleArray')
-  //   .then(project => {
-  //     let subArray = project.subtitleArray;
-  //     subArray.map((eachSub) => {
-  //       console.log(eachSub.inTimeVTT);
-  //       console.log(eachSub.outTimeVTT);
-  //       console.log(eachSub.text)
-  //     });
-
-  //     res.status(200).json({ subArray });
-  //   })
-  //   .catch(err => next(err));
-
 });
 
 projectRouter.get('/api/project-info/:projectId', async (req, res, nex) => {
@@ -167,7 +155,7 @@ projectRouter.put("/api/project/:id/updateProject", (req, res) => {
 
   // Find Project in DB using current user ID , and update the username to what is in the form
   Project
-    .findByIdAndUpdate(req.params.id, { title: req.body.title, genre: req.body.genre, description: req.body.description, language: req.body.language }, { new: true })
+    .findByIdAndUpdate(req.params.id, { title: req.body.title, genre: req.body.genre, description: req.body.description, cloudId: req.body.cloudId }, { new: true })
     .then((project) => {
       console.log('========================================================================================================================================')
       console.log(project);
@@ -189,13 +177,31 @@ projectRouter.delete('/api/deleteProject/:projectId', async (req, res, next) => 
 
   try {
 
+    const foundProjec = await Project.findOne({
+      where: {
+        id: req.params.projectId
+      }
+    });
+
+    const projectToDeleteIdForCloudinary = foundProjec.cloudId
+
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ',projectToDeleteIdForCloudinary)
+
     let response = await Project.destroy({
       where: {
         id: req.params.projectId
       }
+    }).then
+
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&& DELETEDD FROM DB: ', response)
+
+    const cloudResponseAfterDelete = await cloudinary.uploader.destroy(projectToDeleteIdForCloudinary, { resource_type: 'video' }, (error, result) => {
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@ DELETED FROM CLOUDINARY')
+      console.log(result, error)
+
     })
 
-    console.log('RESPONSE AFTER DELETEING ************************* : ', response)
+    console.log('RESPONSE AFTER DELETEING ************************* : ', cloudResponseAfterDelete)
     res.status(200).json({ message: 'Project deleted: ' });
 
   } catch (error) {

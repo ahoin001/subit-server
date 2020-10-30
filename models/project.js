@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     genre: DataTypes.STRING,
     description: DataTypes.STRING,
     videoURL: DataTypes.STRING,
-    language: DataTypes.STRING
+    cloudId: DataTypes.STRING
   }, {});
   Project.associate = function(models) {
     // associations can be defined here
