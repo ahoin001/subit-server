@@ -31,7 +31,9 @@ projectRouter.post('/api/create-project/:userId', upload.single('videoFile'), as
     const uploadResponseFromCloudinary = await cloudinary.uploader.upload(req.file.path, {
       upload_preset: 'subit',
       resource_type: "video"
-    })
+    });
+
+    console.log('RESPONSE FROM CLOUDINARY UPLOAD, NEED PUBLIC ID: ', uploadResponseFromCloudinary.public_id)
 
     // * Videoes would be too large, so I saved the vidoe to cloudinary, and then video url to video in DB 
 
@@ -179,21 +181,27 @@ projectRouter.put("/api/project/:id/updateProject", (req, res) => {
 });
 
 // DELETE ROUTE
-projectRouter.delete('/api/project/:id/deleteProject', (req, res, next) => {
+projectRouter.delete('/api/deleteProject/:projectId', async (req, res, next) => {
 
+  console.log(req.params.id);
   console.log('PROJECT BEING DELETED');
   console.log('=====================================================');
-  console.log(req.params.id);
 
-  Project.findByIdAndRemove(req.params.id)
-    .then(() => {
+  try {
 
-      res.status(200).json({ message: "Delete WAS SUCCESSFUL!" });
-
+    let response = await Project.destroy({
+      where: {
+        id: req.params.projectId
+      }
     })
-    .catch((err) => {
-      next(err);
-    })
+
+    console.log('RESPONSE AFTER DELETEING ************************* : ', response)
+    res.status(200).json({ message: 'Project deleted: ' });
+
+  } catch (error) {
+    console.log(error)
+  }
+
 })
 
 module.exports = projectRouter;
