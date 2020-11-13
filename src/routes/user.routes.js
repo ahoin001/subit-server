@@ -17,9 +17,9 @@ userRouter.post("/signup", async (req, res, next) => {
 
   console.log("User Sign Up Form data: ", req.body);
 
-  const { userName, email, password } = req.body;
+  const { email, password } = req.body;
 
-  if (userName == "" || email == "" || password.match(/[0-9]/) === null) {
+  if (email == "" || password === "") {
     // send JSON file to the frontend if any of these fields are empty or password doesn't contain a number
     res.status(401).json({ message: "All fields need to be filled and password must contain a number! " });
     return;
@@ -28,17 +28,18 @@ userRouter.post("/signup", async (req, res, next) => {
   try {
 
     console.log(email)
-    const userWithEmailAlready = await User.findOne({
+
+    const doesUserWithEmailAlready = await User.findOne({
       where: {
         email: email
       }
     });
 
 
-    console.log('(BACKEND) QUERYING USER DATABASE (SIGNUP) :', userWithEmailAlready)
+    console.log('(BACKEND) QUERYING USER DATABASE (SIGNUP) :', doesUserWithEmailAlready)
 
     // Check if user alrready exists
-    if (userWithEmailAlready !== null) {
+    if (doesUserWithEmailAlready !== null) {
       res.status(401).json({ message: "A user with the same email is already registered!" });
       return;
     }
@@ -58,9 +59,9 @@ userRouter.post("/signup", async (req, res, next) => {
   try {
 
     newUser = await User.create({
-      userName: req.body.userName,
+      // userName: req.body.userName,
       email: req.body.email,
-      password: req.body.password
+      password: encryptedPassword
     });
 
 
