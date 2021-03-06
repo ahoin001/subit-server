@@ -22,7 +22,7 @@ const Subtitle = db.Subtitle
 
 subtitleRouter.post('/api/:projectId/add-sub', (req, res, next) => {
 
-    console.log("ADDING SUBTITLE <<<<<<<<<<<<<< ");
+    console.log("ADDING SUBTITLE <<<<<<<<<< ");
 
     console.log(req.body)
 
