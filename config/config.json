@@ -1,29 +1,30 @@
 {
   "development": {
-    "username": "postgres",
-    "password": null,
+    "username": "mydev",
+    "password": "mydev",
     "database": "subit",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
-    "username": "postgres",
-    "password": null,
+    "username": "mydev",
+    "password": "mydev",
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "username": "postgres",
-    "password": null,
-    "database": "subit",
-    "host": "127.0.0.1",
+    "username": "mydev",
+    "password": "mydev",
+    "database": "subit_production",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
     "dialectOptions": {
-      "ssl": true,
-      "rejectUnauthorized": false 
-    },
-    "use_env_variable": "DATABASE_URL"
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   }
 }
 
