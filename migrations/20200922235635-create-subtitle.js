@@ -19,13 +19,13 @@ module.exports = {
         }
       },
       projectId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER 
       },
       inTime: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER // These are strings after migration
       },
       outTime: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER // These are strings after migration
       },
       text: {
         type: Sequelize.STRING
