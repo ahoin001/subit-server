@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.changeColumn('Subtitles', 'outTime', {
+      queryInterface.changeColumn('Subtitles', 'inTime', {
         type: Sequelize.STRING,
         allowNull: false
       }),
