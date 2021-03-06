@@ -41,50 +41,6 @@ const getUsersFromDB = async (req, res) => {
 
 }
 
-// const getlovedCatsFromDB = async (req, res) => {
-
-//     try {
-//         const lovedCats = await Cat.findAll({
-//             where: {
-//                 loved: true
-//             }
-//         });
-
-//         return res.json({
-//             lovedCats
-//         })
-
-//     } catch (error) {
-//         console.log(error)
-//     }
-
-// }
-
-// const updateCatLovedInDB = async (req, res) => {
-
-//     console.log(req.body)
-
-//     // ? Use catid from http request url
-//     const { idOfCatToLove, loved } = req.body
-
-//     try {
-
-//         await Cat.update({ loved: loved }, {
-//             where: {
-//                 catId: idOfCatToLove
-//             }
-//         });
-
-//         return res.json({
-//             message: 'UPDATED CAT TO LOVED SUCCESSFULLY!'
-//         })
-
-//     } catch (error) {
-//         console.log(error)
-//     }
-
-
-// }
 
 const deleteUserFromDB = async (req, res) => {
 
@@ -116,6 +72,4 @@ module.exports = {
     addUserToDB,
     getUsersFromDB,
     deleteUserFromDB,
-    // getlovedCatsFromDB,
-    // updateCatLovedInDB
 }

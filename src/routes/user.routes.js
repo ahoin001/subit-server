@@ -66,11 +66,13 @@ userRouter.post("/signup", async (req, res, next) => {
 
 
     req.login(newUser, (err) => {
+      
       if (err) {
         console.log(err)
         res.status(401).json({ message: "Something happened when logging in after the signup" });
         return;
       }
+
       newUser.encryptedPassword = undefined;
 
       // console.log('LOGGE')
@@ -113,57 +115,5 @@ userRouter.post('/login',
     res.status(200).json({ LoggedInUser: req.user });
 
   });
-
-// userRouter.post("/login", (req, res, next) => {
-// 
-
-// ***************************************************************
-
-// try {
-
-//   const userSigningIn = await User.findAll({
-//     where: {
-//       email: email
-//     }
-//   });
-
-//   console.log('(BACKEND) QUERYING USER DATABASE (SignUp) :', cats)
-
-//   return res.json({
-//     userSigningIn
-//   })
-
-// } catch (error) {
-//   console.log(error)
-// }
-
-// ***************************************************************
-
-//   console.log(req)
-//   console.log('ENTERED LOGIN ROUTE')
-//   passport.authenticate("local", (err, userDoc, failureDetails) => {
-//     if (err) {
-//       res.status(500).json({ message: "Something went wrong with login." })
-//     }
-//     if (!userDoc) {
-//       res.status(401).json(failureDetails);
-//     }
-
-//     req.login(userDoc, (err) => {
-//       if (err) {
-//         res.status(500).json({ message: "Something went wrong with getting user object from DB" })
-//         return;
-//       }
-//       // set password to undefined so it doesn't get revealed in the client side (browser ==> react app)
-//       userDoc.encryptedPassword = undefined;
-//       // send json object with user information to the client
-//       res.status(200).json({ userDoc });
-//     })
-//   })(req, res, next);
-
-//   console.log('LOGGED IN')
-// }
-
-// )
 
 module.exports = userRouter;

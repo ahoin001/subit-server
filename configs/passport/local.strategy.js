@@ -24,8 +24,9 @@ passport.use(new LocalStrategy({
       // console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ UserValue: ', foundUser.dataValues.password)
 
       if (!foundUser) {
-        console.log("POWPOWPOWPOW$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        console.log("EMAIL NOT FOUND$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         return done(null, false, { message: 'Incorrect email.' });
+        // res.send({ message: 'Incorrect email.' });
       }
 
       if (!bcrypt.compareSync(password, foundUser.dataValues.password)) {
