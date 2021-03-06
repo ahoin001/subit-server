@@ -3,9 +3,9 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.addColumn('Projects', 'cloudId', {
+      queryInterface.changeColumn('Subtitles', 'outTime', {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false
       }),
     ]);
   },
