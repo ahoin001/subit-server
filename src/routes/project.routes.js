@@ -146,29 +146,42 @@ projectRouter.get('/api/project-info/:projectId', async (req, res, nex) => {
 
 /********************************************************** 
   
- * UPDATE AND DELETE
+ * UPDATE 
  
 ***********************************************************/
 
-// UPDATE ROUTE
-projectRouter.put("/api/project/:id/updateProject", (req, res) => {
+projectRouter.put('/api/updateProject/:projectId', async (req, res, next) => {
 
-  // Find Project in DB using current user ID , and update the username to what is in the form
-  Project
-    .findByIdAndUpdate(req.params.id, { title: req.body.title, genre: req.body.genre, description: req.body.description, cloudId: req.body.cloudId }, { new: true })
-    .then((project) => {
-      console.log('========================================================================================================================================')
-      console.log(project);
-      console.log('========================================================================================================================================')
-      res.json(project)
+  // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  // console.log("ProjectId: ", req.params.projectId)
+  // console.log("req.body: ", req.body)
+  // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+  try {
+
+    const [numberOfAffectedRows, affectedRows] = await Project.update({
+      title: req.body.title,
+      genre: req.body.genre,
+      description: req.body.description
+    }, {
+      where: { id: req.params.projectId },
+      returning: true, // needed for affectedRows to be populated
+      plain: true // makes sure that the returned instances are just plain objects
     })
-    .catch((err) => {
-      console.log(`Error updating document`, err);
-    })
+
+    res.status(200).json({ message: 'You updated this project', affectedRows });
+
+  } catch (error) {
+    console.log(error)
+  }
 
 });
 
-// DELETE ROUTE
+/********************************************************** 
+  
+ * DELETE 
+ 
+***********************************************************/
 projectRouter.delete('/api/deleteProject/:projectId', async (req, res, next) => {
 
   console.log(req.params.id);
@@ -185,7 +198,7 @@ projectRouter.delete('/api/deleteProject/:projectId', async (req, res, next) => 
 
     const projectToDeleteIdForCloudinary = foundProjec.cloudId
 
-    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ',projectToDeleteIdForCloudinary)
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ', projectToDeleteIdForCloudinary)
 
     let response = await Project.destroy({
       where: {
